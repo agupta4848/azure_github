@@ -12,25 +12,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repository
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      # 2. Setup Terraform
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
+      # 3. Initialize Terraform
       - name: Terraform Init
         run: terraform init
 
+      # 4. Check Terraform formatting
       - name: Terraform Format Check
         run: terraform fmt -check
 
+      # 5. Validate Terraform configuration
       - name: Terraform Validate
         run: terraform validate
 
+      # 6. Setup TFLint
       - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v5
 
-      - name: TFLint
+      # 7. Run TFLint
+      - name: Run TFLint
+        run: tflint --init && tflint
+
+      # 8. Install tfsec
+      - name: Install tfsec
         run: |
-          tflint --init
-          tflint
+          curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+
+      # 9. Run tfsec security scan
+      - name: Run tfsec
+        run: tfsec .
