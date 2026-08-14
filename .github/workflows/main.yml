@@ -80,4 +80,7 @@ jobs:
       # 13. Terraform Plan
       - name: Terraform Plan
         working-directory: ./parent_modules
-        run: terraform plan
+        env:
+          TF_VAR_rgs: ${{ secrets.TF_VAR_RGS }}
+          TF_VAR_storage_accounts: ${{ secrets.TF_VAR_STORAGE_ACCOUNTS }}
+        run: terraform plan -input=false
