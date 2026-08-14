@@ -12,7 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout repository
+
+      # 1. Checkout Repository
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -20,16 +21,19 @@ jobs:
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 
-      # 3. Initialize Terraform
+      # 3. Terraform Init
       - name: Terraform Init
+        working-directory: ./parent_modules
         run: terraform init
 
-      # 4. Check Terraform formatting
+      # 4. Terraform Format Check
       - name: Terraform Format Check
+        working-directory: ./parent_modules
         run: terraform fmt -check
 
-      # 5. Validate Terraform configuration
+      # 5. Terraform Validate
       - name: Terraform Validate
+        working-directory: ./parent_modules
         run: terraform validate
 
       # 6. Setup TFLint
@@ -38,28 +42,37 @@ jobs:
 
       # 7. Run TFLint
       - name: Run TFLint
-        run: tflint --init && tflint
+        working-directory: ./parent_modules
+        run: |
+          tflint --init
+          tflint
 
       # 8. Install tfsec
       - name: Install tfsec
         run: |
           curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install_linux.sh | bash
+
+      # 9. Run tfsec Security Scan
+      - name: Run tfsec
+        run: tfsec .
+
+      # 10. Run Gitleaks Secret Scan
       - name: Run Gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-                - name: Setup Infracost
+      # 11. Setup Infracost
+      - name: Setup Infracost
         uses: infracost/actions/setup@v3
 
+      # 12. Run Infracost
       - name: Run Infracost
+        working-directory: ./parent_modules
         run: |
           infracost breakdown \
-            --path ./parent_modules \
+            --path . \
             --format json \
             --out-file infracost.json
         env:
           INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
-      # 9. Run tfsec security scan
-      - name: Run tfsec
-        run: tfsec .
