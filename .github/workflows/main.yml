@@ -76,3 +76,8 @@ jobs:
             --out-file infracost.json
         env:
           INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+
+      # 13. Terraform Plan
+      - name: Terraform Plan
+        working-directory: ./parent_modules
+        run: terraform plan
