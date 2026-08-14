@@ -48,6 +48,18 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+                - name: Setup Infracost
+        uses: infracost/actions/setup@v3
+
+      - name: Run Infracost
+        run: |
+          infracost breakdown \
+            --path ./parent_modules \
+            --format json \
+            --out-file infracost.json
+        env:
+          INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
       # 9. Run tfsec security scan
       - name: Run tfsec
         run: tfsec .
