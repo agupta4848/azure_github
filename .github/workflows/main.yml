@@ -21,10 +21,13 @@ jobs:
       - name: Terraform Init
         run: terraform init
         
-      - name: Terraform Format Check
+          - name: Terraform Format Check
         run: terraform fmt -check
 
-              - name: Setup TFLint
+      - name: Terraform Validate
+        run: terraform validate
+
+      - name: Setup TFLint
         uses: terraform-linters/setup-tflint@v5
 
       - name: TFLint
