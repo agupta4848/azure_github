@@ -1,7 +1,14 @@
 variable "rgs" {
-  type = set(string)
+  type = map(object({
+    name     = string
+    location = string
+  }))
 }
 
 variable "storage_accounts" {
-  type = set(string)
+  type = map(object({
+    name                = string
+    resource_group_name = string
+    location            = string
+  }))
 }
