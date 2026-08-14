@@ -1,3 +1,3 @@
 variable "rgs" {
-  type = list(string)
+  type = set(string)
 }
